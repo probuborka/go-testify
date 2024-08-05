@@ -23,12 +23,12 @@ func TestMainHandlerWhenRequestCorrect(t *testing.T) {
 	require.Equal(t, http.StatusOK, responseRecorder.Code)
 
 	// тело ответа не пустое
-	body := responseRecorder.Body.String()
-	require.NotEmpty(t, body)
+	body := responseRecorder.Body
+	assert.NotEmpty(t, body)
 
 	// проверяем количество кафе, оно должно быть равным cafeCount
-	list := strings.Split(body, ",")
-	require.Len(t, list, cafeCount)
+	list := strings.Split(body.String(), ",")
+	assert.Len(t, list, cafeCount)
 }
 
 // Если в параметре count указано больше, чем есть всего, должны вернуться все доступные кафе.
@@ -44,12 +44,12 @@ func TestMainHandlerWhenCountMoreThanTotal(t *testing.T) {
 	require.Equal(t, http.StatusOK, responseRecorder.Code)
 
 	// тело ответа не пустое
-	body := responseRecorder.Body.String()
-	require.NotEmpty(t, body)
+	body := responseRecorder.Body
+	assert.NotEmpty(t, body)
 
 	// проверяем количество кафе, оно должно быть равным totalCount
-	list := strings.Split(body, ",")
-	require.Len(t, list, totalCount)
+	list := strings.Split(body.String(), ",")
+	assert.Len(t, list, totalCount)
 }
 
 // Город, который передаётся в параметре city, не поддерживается. Сервис возвращает код ответа 400 и ошибку wrong city value в теле ответа.
@@ -61,7 +61,7 @@ func TestMainHandlerWhenWrongCityValue(t *testing.T) {
 	handler.ServeHTTP(responseRecorder, req)
 
 	// код ответа = 400
-	assert.Equal(t, http.StatusBadRequest, responseRecorder.Code)
+	require.Equal(t, http.StatusBadRequest, responseRecorder.Code)
 	// ошибка wrong city value
 	assert.Equal(t, "wrong city value", responseRecorder.Body.String())
 }
